@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String       @id @default(uuid())
+  email          String       @unique // Personal email
+  companyEmail   String?      @unique // Generated company email
+  password       String?      // Plaintext or hashed password for app login
+  name           String
+  role           String       // "employee", "hr", "tl", "admin", "ceo"
+  title          String       @default("Employee")
+  phone          String       @default("")
+  teamName       String       @default("")
+  forcePasswordReset Boolean  @default(true) // Force reset on first login
+  githubId       String?      // Auto-provisioned github ID
+  projectCreds   String?      // Project credentials link or text
+  departmentId   String?
+  department     Department?  @relation(fields: [departmentId], references: [id])
+  status         String       @default("PENDING_HR") // "PENDING_HR", "PENDING_CEO", "OFFER_GENERATED", "OFFER_HR_APPROVED", "OFFER_SIGNED", "VERIFIED", "ONBOARDING", "TEAM_ASSIGNED", "ACTIVE"
+  health         Int          @default(100)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  tasks          Task[]       @relation("AssignedTasks")
+  documents      Document[]
+  messagesSent   Message[]    @relation("MessagesSent")
+  standups       Standup[]
+  projectId      String?
+  project        Project?     @relation(fields: [projectId], references: [id])
+}
+
+model Department {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  headName  String
+  budget    String
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  budget    String
+  status    String   @default("on-track") // "on-track", "at-risk", "delayed"
+  progress  Int      @default(0)
+  teamName  String
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  category    String   @default("General")
+  status      String   @default("todo") // "todo", "in-progress", "review", "done"
+  priority    String   @default("medium") // "low", "medium", "high"
+  points      Int      @default(1)
+  dueDate     String?
+  assigneeId  String?
+  assignee    User?    @relation("AssignedTasks", fields: [assigneeId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  name      String
+  type      String
+  status    String   @default("pending") // "pending", "verified", "published"
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  channel   String   @default("direct") // "direct", "all-hands", "hr-updates"
+  senderId  String
+  sender    User     @relation("MessagesSent", fields: [senderId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Standup {
+  id        String   @id @default(uuid())
+  yesterday String
+  today     String
+  blockers  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String?  // Recipient user ID (if specific user)
+  role      String?  // If role-based notification (e.g. "hr", "ceo", "tl")
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model OfferDraft {
+  id             String   @id @default(uuid())
+  candidateName  String
+  candidateEmail String
+  role           String
+  salaryBand     String
+  joiningDate    String
+  status         String   @default("PENDING_SIGNATURE") // PENDING_SIGNATURE, APPROVED, REJECTED, ACCEPTED
+  signatureOtp   String?
+  approverRole   String   @default("approver")
+  acceptanceToken String  @unique @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String
+  actor       String
+  details     String
+  createdAt   DateTime @default(now())
+}

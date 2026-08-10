@@ -1,0 +1,109 @@
+-- DigiMabble HRMS Supabase Schema Migration
+
+-- Create Departments
+CREATE TABLE IF NOT EXISTS "Department" (
+  "id" TEXT PRIMARY KEY,
+  "name" TEXT UNIQUE NOT NULL,
+  "headName" TEXT NOT NULL,
+  "budget" TEXT NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Users
+CREATE TABLE IF NOT EXISTS "User" (
+  "id" TEXT PRIMARY KEY,
+  "email" TEXT UNIQUE NOT NULL,
+  "companyEmail" TEXT UNIQUE,
+  "password" TEXT,
+  "name" TEXT NOT NULL,
+  "role" TEXT NOT NULL,
+  "title" TEXT DEFAULT 'Employee' NOT NULL,
+  "phone" TEXT DEFAULT '' NOT NULL,
+  "teamName" TEXT DEFAULT '' NOT NULL,
+  "githubId" TEXT,
+  "projectCreds" TEXT,
+  "departmentId" TEXT REFERENCES "Department"("id") ON DELETE SET NULL,
+  "status" TEXT DEFAULT 'PENDING_HR' NOT NULL,
+  "health" INTEGER DEFAULT 100 NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Projects
+CREATE TABLE IF NOT EXISTS "Project" (
+  "id" TEXT PRIMARY KEY,
+  "name" TEXT NOT NULL,
+  "budget" TEXT NOT NULL,
+  "status" TEXT DEFAULT 'on-track' NOT NULL,
+  "progress" INTEGER DEFAULT 0 NOT NULL,
+  "teamName" TEXT NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Tasks
+CREATE TABLE IF NOT EXISTS "Task" (
+  "id" TEXT PRIMARY KEY,
+  "title" TEXT NOT NULL,
+  "category" TEXT DEFAULT 'General' NOT NULL,
+  "status" TEXT DEFAULT 'todo' NOT NULL,
+  "priority" TEXT DEFAULT 'medium' NOT NULL,
+  "points" INTEGER DEFAULT 1 NOT NULL,
+  "dueDate" TEXT,
+  "assigneeId" TEXT REFERENCES "User"("id") ON DELETE SET NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Documents
+CREATE TABLE IF NOT EXISTS "Document" (
+  "id" TEXT PRIMARY KEY,
+  "name" TEXT NOT NULL,
+  "type" TEXT NOT NULL,
+  "status" TEXT DEFAULT 'pending' NOT NULL,
+  "userId" TEXT REFERENCES "User"("id") ON DELETE SET NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Messages
+CREATE TABLE IF NOT EXISTS "Message" (
+  "id" TEXT PRIMARY KEY,
+  "content" TEXT NOT NULL,
+  "channel" TEXT DEFAULT 'direct' NOT NULL,
+  "senderId" TEXT REFERENCES "User"("id") ON DELETE CASCADE NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Standups
+CREATE TABLE IF NOT EXISTS "Standup" (
+  "id" TEXT PRIMARY KEY,
+  "yesterday" TEXT NOT NULL,
+  "today" TEXT NOT NULL,
+  "blockers" TEXT NOT NULL,
+  "userId" TEXT REFERENCES "User"("id") ON DELETE CASCADE NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Notifications
+CREATE TABLE IF NOT EXISTS "Notification" (
+  "id" TEXT PRIMARY KEY,
+  "userId" TEXT REFERENCES "User"("id") ON DELETE CASCADE,
+  "role" TEXT,
+  "title" TEXT NOT NULL,
+  "message" TEXT NOT NULL,
+  "read" BOOLEAN DEFAULT FALSE NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- Create Offer Letters
+CREATE TABLE IF NOT EXISTS "OfferLetter" (
+  "id" TEXT PRIMARY KEY,
+  "userId" TEXT UNIQUE REFERENCES "User"("id") ON DELETE CASCADE NOT NULL,
+  "pdfUrl" TEXT,
+  "status" TEXT DEFAULT 'PENDING_REVIEW' NOT NULL,
+  "content" TEXT NOT NULL,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
