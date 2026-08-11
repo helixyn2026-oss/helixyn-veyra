@@ -92,28 +92,62 @@ export default function HRDashboardClient({ drafts }: { drafts: any[] }) {
             </div>
             <span className="text-xs font-bold bg-indigo-500/10 text-indigo-500 px-2 py-1 rounded">FIXED TEMPLATE</span>
           </div>
-          <div className="p-8 bg-white text-slate-800 font-serif min-h-[300px] leading-relaxed relative">
+          <div className="p-8 bg-white text-slate-800 font-serif min-h-[300px] leading-relaxed relative text-xs">
             {/* Watermark */}
             <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
               <span className="text-8xl font-black rotate-[-30deg]">Helixyn</span>
             </div>
             
-            <h1 className="text-xl font-bold text-center text-slate-900 mb-6 uppercase tracking-widest border-b pb-4">Offer of Employment</h1>
+            <div className="text-center mb-6">
+              <h1 className="text-lg font-bold text-slate-900 uppercase tracking-widest">Offer Letter</h1>
+              <h2 className="text-xs text-slate-500 uppercase tracking-wide mt-1">Employment / Internship Appointment</h2>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="font-bold text-orange-500 uppercase text-[10px] border-b border-orange-500 pb-1 mb-2">Candidate Details</h3>
+              <p>To</p>
+              <p className="font-bold">{candidateName || "[Candidate Name]"}</p>
+              <p className="text-slate-500">[Candidate Address]</p>
+              <p className="text-slate-500">[City, State - PIN]</p>
+              <div className="flex justify-between mt-3 text-[10px]">
+                <p>Candidate / Register No.: <strong>HEL-XXXX</strong></p>
+                <p>Date: <strong>{new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</strong></p>
+              </div>
+            </div>
             
-            <p className="mb-4">
+            <p className="mb-3">
               Dear <strong>{candidateName || "[Candidate Name]"}</strong>,
             </p>
             
-            <p className="mb-4">
-              We are delighted to offer you employment at Helixyn in the position of <strong>{role || "[Role]"}</strong>. Your anticipated start date is <strong>{joiningDate || "[Joining Date]"}</strong>, and your starting compensation is set at the <strong>{salaryBand || "[Salary Band]"}</strong> band.
+            <p className="mb-3 text-justify">
+              We are pleased to offer you the position of <strong>{role || "[Job Title]"}</strong> at Helixyn. We believe your skills, potential, and enthusiasm will be a valuable addition to our team.
             </p>
             
-            <p className="mb-6">
-              Your onboarding checklist is ready inside the ELMS system, and access to all corporate tools (GitHub, Slack, Jira) will be automatically provisioned upon your review and signature.
+            <p className="mb-3 text-justify">
+              Your engagement will commence on <strong>{joiningDate || "[Joining Date]"}</strong> and will continue until further notice, subject to the terms and conditions applicable to your role.
             </p>
+
+            <p className="mb-6 text-justify">
+              During your tenure, you will work with the Engineering/Operations team and report to the designated Manager. Your responsibilities will include the duties assigned to your role, together with any reasonable responsibilities related to the work of the organization.
+            </p>
+
+            <h3 className="font-bold text-orange-500 uppercase text-[10px] border-b border-orange-500 pb-1 mb-2">Offer Summary</h3>
+            <div className="grid grid-cols-2 gap-y-2 text-[10px] mb-6">
+              <div className="font-bold text-slate-500">Position</div>
+              <div className="font-bold">{role || "[Job Title]"}</div>
+              <div className="font-bold text-slate-500">Department / Team</div>
+              <div className="font-bold">Engineering</div>
+              <div className="font-bold text-slate-500">Start Date</div>
+              <div className="font-bold">{joiningDate || "[Joining Date]"}</div>
+              <div className="font-bold text-slate-500">Compensation / Stipend</div>
+              <div className="font-bold">{salaryBand || "[Salary Band]"}</div>
+            </div>
+
+            <p className="mb-2 text-justify">We look forward to having you at Helixyn and wish you a successful and rewarding professional journey with us.</p>
             
-            <p className="mb-2">Sincerely,</p>
-            <p className="font-bold text-slate-900 italic">Helixyn Executive Management Team</p>
+            <div className="mt-8 pt-4 border-t border-slate-200 text-center text-[8px] text-slate-400">
+              <p>Confidential • Official Company Document • Page 1 of 2</p>
+            </div>
           </div>
         </div>
       </div>

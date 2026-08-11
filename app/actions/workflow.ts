@@ -125,7 +125,7 @@ export async function signAndSendOffer(draftId: string, providedOtp: string) {
     if (!fs.existsSync(publicDir)) {
       fs.mkdirSync(publicDir, { recursive: true })
     }
-    const pdfBuffer = await generateOfferLetterPDF(updatedDraft.candidateName, updatedDraft.role, updatedDraft.salaryBand, updatedDraft.joiningDate)
+    const pdfBuffer = await generateOfferLetterPDF(updatedDraft.candidateName, updatedDraft.role, updatedDraft.salaryBand, updatedDraft.joiningDate, updatedDraft.id)
     const pdfFileName = `offer-${updatedDraft.id}.pdf`
     fs.writeFileSync(path.join(publicDir, pdfFileName), pdfBuffer)
     pdfUrl = `/offer-letters/${pdfFileName}`
